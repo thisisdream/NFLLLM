@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFLLM - AI-Powered Fantasy Football Intelligence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #0a0e27;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+            z-index: -1;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,163,0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(10%, 10%) scale(1.1); }
+        }
+
+        /* Header */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ffa3 0%, #03e1ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .beta-badge {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 40px 60px;
+            text-align: center;
+        }
+
+        .coming-soon-badge {
+            display: inline-block;
+            background: rgba(0, 255, 163, 0.15);
+            border: 2px solid #00ffa3;
+            color: #00ffa3;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 163, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 163, 0.6); }
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff 0%, #00ffa3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #a0aec0;
+            margin-bottom: 50px;
+            font-weight: 400;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: #cbd5e0;
+            max-width: 800px;
+            margin: 0 auto 60px;
+            line-height: 1.8;
+        }
+
+        /* Waitlist Form */
+        .waitlist-container {
+            max-width: 600px;
+            margin: 0 auto 80px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .waitlist-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .waitlist-subtitle {
+            color: #a0aec0;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #718096;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00ffa3;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 4px rgba(0, 255, 163, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #00ffa3 0%, #03e1ff 100%);
+            border: none;
+            border-radius: 12px;
+            color: #0a0e27;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 255, 163, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #00ffa3 0%, #03e1ff 100%);
+            color: #0a0e27;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Grid */
+        .features-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #fff 0%, #00ffa3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 163, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 163, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 255, 163, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .feature-description {
+            color: #a0aec0;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 40px;
+        }
+
+        .steps {
+            display: grid;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .step {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00ffa3 0%, #03e1ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #0a0e27;
+        }
+
+        .step-content h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .step-content p {
+            color: #a0aec0;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 80px auto;
+            margin-left: 40px;
+            margin-right: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat {
+            position: relative;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ffa3 0%, #03e1ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 40px;
+            color: #718096;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 80px;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.2rem;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+
+            .waitlist-container {
+                padding: 30px 20px;
+                margin: 0 20px 60px;
+            }
+
+            .features-section,
+            .how-it-works {
+                padding: 40px 20px;
+            }
+
+            .step {
+                flex-direction: column;
+            }
+
+            .stats-bar {
+                margin: 60px 20px;
+                padding: 30px 20px;
+                gap: 30px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo">NFLLM</div>
+            <div class="beta-badge">Beta</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="coming-soon-badge">🏈 Coming Soon</div>
+        <h1>Win Your League<br>Before The Waiver Wire Does</h1>
+        <p class="tagline">AI-Powered Fantasy Football Intelligence</p>
+        <p class="hero-description">
+            Stop chasing last week's breakouts. NFLLM predicts tomorrow's waiver wire gold using AI trained on elite fantasy analysts—helping you grab league-winners 1-2 weeks before your competition even notices.
+        </p>
+    </section>
+
+    <div class="waitlist-container">
+        <h2 class="waitlist-title">Join the Waitlist</h2>
+        <p class="waitlist-subtitle">Be the first to dominate your draft with AI-powered insights</p>
+        
+        <form id="waitlistForm">
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Your Email" required>
+            </div>
+            <button type="submit" class="submit-btn">Secure Your Spot</button>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            🎉 You're on the list! We'll notify you when NFLLM launches.
+        </div>
+    </div>
+
+    <section class="stats-bar">
+        <div class="stat">
+            <span class="stat-number">1-2</span>
+            <span class="stat-label">Weeks Ahead</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">15%+</span>
+            <span class="stat-label">Better Predictions</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number">60-70%</span>
+            <span class="stat-label">Value From Waivers</span>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Why NFLLM Changes The Game</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">Predictive Intelligence</h3>
+                <p class="feature-description">Spot breakouts before they happen. Our AI analyzes snap share trends, route participation, and matchup exploitation—not just last week's points.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🧠</span>
+                <h3 class="feature-title">Elite Analyst Modes</h3>
+                <p class="feature-description">Choose your strategy: JJ Zachariason's analytics, Matt Harmon's route-running insights, or Jeff Ratcliffe's opportunity metrics. Your AI, your philosophy.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🔗</span>
+                <h3 class="feature-title">League Synced</h3>
+                <p class="feature-description">Connect your Yahoo league for personalized recommendations based on your actual roster needs, scoring settings, and available players.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">💡</span>
+                <h3 class="feature-title">Transparent Reasoning</h3>
+                <p class="feature-description">See exactly why each player is recommended with key metrics and analyst framework principles. Learn while you dominate.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">⚡</span>
+                <h3 class="feature-title">Waiver Wire Mastery</h3>
+                <p class="feature-description">Championships are won on waivers, not in drafts. Focus on what matters most with weekly ranked recommendations and drop advice.</p>
+            </div>
+
+            <div class="feature-card">
+                <span class="feature-icon">🚀</span>
+                <h3 class="feature-title">Time Machine</h3>
+                <p class="feature-description">Cut your weekly research time by 50%+. Get podcast-quality insights compressed into decision-ready recommendations in seconds.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Connect Your League</h3>
+                    <p>Sync your Yahoo fantasy league in seconds. We'll read your roster, available players, and league settings—no management access needed.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Choose Your Analyst</h3>
+                    <p>Select which fantasy expert's framework drives your recommendations. Analytics-first? Route-running specialist? Your strategy, powered by AI.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Get Predictive Picks</h3>
+                    <p>Receive weekly ranked waiver recommendations with 1-2 week breakout predictions. See key metrics, reasoning, and exactly who to drop.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Win Your League</h3>
+                    <p>Make moves before your competition. Grab league-winners while they're still available. Dominate the waiver wire, dominate your league.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p><strong>NFLLM</strong> - AI-Powered Fantasy Football Intelligence</p>
+        <p>Launching Before the 2026 NFL Season</p>
+        <p style="margin-top: 20px; color: #4a5568;">© 2025 NFLLM. Built for fantasy champions.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('waitlistForm');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            const signups = {
+                name: name,
+                email: email,
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('Waitlist signup:', signups);
+            
+            successMessage.classList.add('show');
+            form.reset();
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 5000);
+        });
+
+        // Smooth scroll for any future anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
